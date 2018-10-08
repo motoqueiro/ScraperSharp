@@ -20,20 +20,35 @@
 
         public ListPageSettings GetSettings => this.Settings as ListPageSettings;
 
+        public virtual string GetListItemsSelector => this.GetSettings?.ListItemsSelector;
+
+        public virtual IEnumerable<PropertySettings> GetItemProperties => this.GetSettings?.ItemProperties;
+
         public event EventHandler<ListPageScrapedEventArgs> ListPageScraped;
 
         public override async Task Scrape()
         {
-            var document = await this.OpenDocument();
-            var listProperties = this.ScrapeListProperties(
-                document,
-                this.GetSettings.ListItemsSelector,
-                this.GetSettings.Properties);
+            var document = await this.OpenDocument(this.GetSettings.Url);
             var e = new ListPageScrapedEventArgs
             {
                 Url = document.Url,
-                ListProperties = listProperties
+                Settings = this.GetSettings
             };
+            if (this.GetSettings.Properties != null)
+            {
+                e.Properties = this.ScrapeProperties(
+                        document.Body,
+                        this.GetSettings.Properties);
+            }
+
+            if (this.GetItemProperties != null)
+            {
+                e.ListProperties = this.ScrapeListProperties(
+                        document,
+                        this.GetListItemsSelector,
+                        this.GetItemProperties);
+            }
+
             this.ListPageScraped?.Invoke(this, e);
         }
 
@@ -42,21 +57,6 @@
             string listItemsSelector,
             IEnumerable<PropertySettings> propertySettings)
         {
-            if (document == null)
-            {
-                throw new ArgumentNullException(nameof(document));
-            }
-
-            if (string.IsNullOrEmpty(listItemsSelector))
-            {
-                throw new ArgumentNullException(nameof(listItemsSelector));
-            }
-
-            if (propertySettings == null)
-            {
-                throw new ArgumentNullException(nameof(propertySettings));
-            }
-
             var listItemElements = document.QuerySelectorAll(listItemsSelector);
             if (listItemElements == null)
             {
@@ -73,6 +73,18 @@
             }
 
             return listItems;
+        }
+
+        internal override void ValidateSettings(PageSettings settings)
+        {
+            var listPageSettings = settings as ListPageSettings;
+            if (string.IsNullOrEmpty(listPageSettings.ListItemsSelector))
+            {
+                throw new ArgumentNullException(nameof(listPageSettings.ListItemsSelector));
+            }
+
+            base.ValidatePropertySettings(listPageSettings.ItemProperties);
+            base.ValidateSettings(settings);
         }
     }
 }

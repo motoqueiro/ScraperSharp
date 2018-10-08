@@ -2,22 +2,25 @@
 {
     using System.Collections.Generic;
     using AngleSharp.Dom;
-    using AngleSharp.Dom.Html;
 
     public class Pagination
     {
-        public int? TotalPages { get; set; }
+        public IElement TotalPages { get; set; }
 
-        public IHtmlAnchorElement FirstPage { get; set; }
+        public IElement FirstPage { get; set; }
 
-        public IHtmlAnchorElement PreviousPage { get; set; }
+        public IElement PreviousPage { get; set; }
 
-        public IEnumerable<IHtmlAnchorElement> Pages { get; set; }
+        public IList<IElement> Pages { get; set; }
 
         public IElement CurrentPage { get; set; }
 
-        public IHtmlAnchorElement NextPage { get; set; }
+        public IElement NextPage { get; set; }
 
-        public IHtmlAnchorElement LastPage { get; set; }
+        public IElement LastPage { get; set; }
+
+        internal bool HasNextPage => this.NextPage != null;
+
+        internal bool HasPage(int pageNumber) => this.Pages?[pageNumber - 1] != null;
     }
 }

@@ -5,7 +5,5 @@
         public string Name { get; set; }
 
         public string Selector { get; set; }
-
-        public string Attribute { get; set; }
     }
 }

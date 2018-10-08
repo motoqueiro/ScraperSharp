@@ -6,6 +6,6 @@
     {
         public string Url { get; set; }
 
-        public IEnumerable<PropertySettings> Properties { get; set; }
+        public IList<PropertySettings> Properties { get; set; }
     }
 }

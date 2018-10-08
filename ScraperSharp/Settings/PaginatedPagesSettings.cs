@@ -1,7 +1,5 @@
-﻿namespace ScraperSharp.Scrapers
+﻿namespace ScraperSharp.Settings
 {
-    using ScraperSharp.Settings;
-
     public class PaginatedPagesSettings
         : ListPageSettings
     {
@@ -13,7 +11,7 @@
 
         public string PagesSelector { get; set; }
 
-        public string CurrentPage { get; set; }
+        public string CurrentPageSelector { get; set; }
 
         public string NextPageSelector { get; set; }
 
